@@ -13,6 +13,7 @@ import {
   concatMap,
   shareReplay,
   switchMap,
+  mapTo,
 } from 'rxjs/operators';
 import { calculateMortgage } from './helpers';
 import { ajax } from 'rxjs/ajax';
@@ -40,7 +41,8 @@ const loanLength$ = createInput(loanLength);
 //suppose i want to make a save on the response
 const saveResponse = (item) => {
   const url = 'https://jsonplaceholder.typicode.com/posts';
-  return ajax.post(url, item);
+  let data = item;
+  return ajax.post(url, item).pipe(mapTo(data));
 };
 
 // Combine latest from Each stream
@@ -49,8 +51,8 @@ const calculator$ = combineLatest({
   loanAmount: loanAmount$,
   length: loanLength$,
 }).pipe(
-  map((item) => {
-    return calculateMortgage(item.interest, item.loanAmount, item.length);
+  map(({ interest, loanAmount, length }) => {
+    return calculateMortgage(interest, loanAmount, length);
   }),
   tap((item) => {
     console.log(item);
@@ -68,4 +70,4 @@ calculator$
     delay(2000),
     switchMap((item) => saveResponse(item))
   )
-  .subscribe((item) => alert('posted'));
+  .subscribe((item) => alert(`Monthly Payment saved as : $${item}`));

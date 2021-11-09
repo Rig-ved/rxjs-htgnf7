@@ -57,8 +57,8 @@ const calculator$ = combineLatest({
   tap((item) => {
     console.log(item);
   }),
-  filter((item) => !isNaN(parseFloat(item))),
-  share()
+  filter((item) => !isNaN(parseFloat(item)))
+  // share()
 );
 
 calculator$.subscribe((value) => {

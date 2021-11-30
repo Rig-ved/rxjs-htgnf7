@@ -1,25 +1,12 @@
-import { AsyncSubject, BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
-const sub = new AsyncSubject();
+const sub = new ReplaySubject(2);
 
-// ASync Subject works on the basis of completion and if complete is called emits the last Value to all the subscribers
-const observer = {
-  next: (val) => {
-    console.log(val);
-  },
-  error: (err) => {
-    console.log(err);
-  },
-  complete: () => {
-    console.log('completed');
-  },
-};
+// Replay subject will replay all the values
 
-sub.next('Hello');
-sub.next('World');
-sub.next('Bye Nah');
-sub.complete();
-sub.next('GoodBye');
-
-const sub1 = sub.subscribe(console.log);
-const sub2 = sub.subscribe(observer);
+sub.next(1);
+sub.next(2);
+sub.next(3);
+sub.subscribe(console.log);
+sub.next(4);
+sub.next(5);

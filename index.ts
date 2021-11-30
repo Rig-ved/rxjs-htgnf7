@@ -1,27 +1,28 @@
-import './style.css';
-import { loadingService as _ } from './loadingService';
-import { fromEvent, interval } from 'rxjs';
-import {
-  exhaustMap,
-  first,
-  take,
-  takeUntil,
-  takeWhile,
-  tap,
-} from 'rxjs/operators';
+import { interval, map, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-const loadingOverlay = document.querySelector('#loading-overlay');
+const observer = {
+  next: (val) => {
+    console.log('Next Oberserver : ', val);
+  },
+  error: (err) => {
+    console.log(err);
+  },
+  complete: () => {
+    console.log('Completed by the observer');
+  },
+};
 
-const interval$ = interval(5000).pipe(
-  first(),
-  tap(() => {
-    return _.hideLoading();
+const subject = new Subject();
+
+const interval$ = interval(2000).pipe(
+  tap((item) => {
+    console.log(`Next Interval : ${item+1}`);
   })
 );
-_.loadingStatus$.pipe(takeUntil(interval$)).subscribe((item) => {
-  if (Boolean(item)) {
-    loadingOverlay.classList.add('open');
-  } else {
-    loadingOverlay.classList.remove('open');
-  }
-});
+
+interval$.subscribe(subject);
+
+const sub1 =  subject.subscribe(observer)
+const sub =  subject.subscribe(observer)
+

@@ -1,23 +1,31 @@
-import { Observable, asyncScheduler } from 'rxjs';
-import { observeOn } from 'rxjs/operators';
+import { combineLatest, fromEvent, pluck, tap, zip } from 'rxjs';
+console.clear();
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import './style.css';
 
-const observable = new Observable((observer) => {
-  observer.next(1);
-  observer.next(2);
-  observer.next(3);
-  observer.complete();
-}).pipe(observeOn(asyncScheduler));
+const qty = document.querySelector('#qty');
+const rate = document.querySelector('#rate');
 
-console.log('just before subscribe');
-observable.subscribe({
-  next(x) {
-    console.log('got value ' + x);
-  },
-  error(err) {
-    console.error('something wrong occurred: ' + err);
-  },
-  complete() {
-    console.log('done');
-  },
+const display = document.querySelector('#displayContent');
+
+const qty$ = fromEvent(qty, 'input').pipe(pluck('target', 'value'));
+const rate$ = fromEvent(rate, 'input').pipe(pluck('target', 'value'));
+
+const calculate = (qty, rate) => {
+  return +qty * +rate;
+};
+
+const combine$ = zip([qty$, rate$]).pipe(
+  map(([qty, rate]) => {
+    return calculate(qty, rate);
+  }),
+  distinctUntilChanged(),
+  filter((item: number) => {
+    return !isNaN(item);
+  }),
+  map((item) => String(item))
+);
+
+combine$.subscribe((data) => {
+  display.innerHTML = data;
 });
-console.log('just after subscribe');

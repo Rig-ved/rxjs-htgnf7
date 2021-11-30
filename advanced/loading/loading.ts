@@ -12,17 +12,16 @@ import {
 
 const loadingOverlay = document.querySelector('#loading-overlay');
 
-const click$ = interval(5000).pipe(
+const interval$ = interval(5000).pipe(
   first(),
   tap(() => {
     return _.hideLoading();
   })
 );
-_.loadingStatus$.pipe(takeUntil(click$)).subscribe((item) => {
+_.loadingStatus$.pipe(takeUntil(interval$)).subscribe((item) => {
   if (Boolean(item)) {
     loadingOverlay.classList.add('open');
   } else {
     loadingOverlay.classList.remove('open');
   }
 });
-_.showLoading();

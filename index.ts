@@ -1,31 +1,11 @@
-import { combineLatest, fromEvent, pluck, tap, zip } from 'rxjs';
-console.clear();
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
-import './style.css';
+import { combineLatest, forkJoin, from, of, withLatestFrom, zip } from 'rxjs';
 
-const qty = document.querySelector('#qty');
-const rate = document.querySelector('#rate');
+const color$ = of('blue', 'red', 'green', 'yellow', 'messa', 'magenta');
 
-const display = document.querySelector('#displayContent');
+const logo$ = from(['fb', 'twitter', 'oauth', 'twillio', 'github', 'linkedIn']);
 
-const qty$ = fromEvent(qty, 'input').pipe(pluck('target', 'value'));
-const rate$ = fromEvent(rate, 'input').pipe(pluck('target', 'value'));
+const withLatestFrom$ = logo$.pipe(withLatestFrom(color$));
 
-const calculate = (qty, rate) => {
-  return +qty * +rate;
-};
+// With latest from emits the source observable values in conjunction with the last value emitted from the inner observable . making changes in the inner Observable wont trigger the subscription
 
-const combine$ = zip([qty$, rate$]).pipe(
-  map(([qty, rate]) => {
-    return calculate(qty, rate);
-  }),
-  distinctUntilChanged(),
-  filter((item: number) => {
-    return !isNaN(item);
-  }),
-  map((item) => String(item))
-);
-
-combine$.subscribe((data) => {
-  display.innerHTML = data;
-});
+withLatestFrom$.subscribe(console.log);

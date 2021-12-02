@@ -15,7 +15,7 @@ const observer = {
 // Work function , delay , state
 const sub = asyncScheduler.schedule(
   (data) => {
-    console.log(observer.next(3));
+    console.log(data);
   },
   1000,
   {
@@ -37,8 +37,8 @@ const obsOn$ = of('pink', 'red', 'blue', 'White').pipe(
   // Instead of below use the delay operator as ObserveOn will fire late for Errors as well but delay will immediately invoke the same
 
   // Lets tap the results now : As you can see the results from tap are immediately invoked
-  observeOn(asyncScheduler, 2000),
-  tap((val) => console.log('Val'))
+  tap((val) => console.log('Val')),
+  observeOn(asyncScheduler, 2000)
 
   // lastly instead of Observe on we can also do subscribeOn  which is equivalent to putting subscription within a setTimeout
 

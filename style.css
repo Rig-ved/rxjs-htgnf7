@@ -6,6 +6,10 @@ body {
   margin: 0;
 }
 
+.results {
+  font-size: 16px;
+  margin: 10px;
+}
 html {
   font-family: 'Roboto', sans-serif;
   font-size: 62.5%;

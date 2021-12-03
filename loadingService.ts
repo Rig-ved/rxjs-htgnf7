@@ -7,6 +7,7 @@ interface loading {
   hideLoading(): void;
   loadingStatus$: any;
 }
+
 export const loadingService: loading = {
   showLoading: () => loading$.next(true),
   hideLoading: () => loading$.next(false),

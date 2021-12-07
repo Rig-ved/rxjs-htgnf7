@@ -16,13 +16,17 @@ const obs$ = range(1, 100).subscribe((data) => {
   console.log(data);
 });
 
-Promise.resolve('Promise function').then(console.log);
-
 queueMicrotask(() => {
   console.log('From microtask');
 });
 
+Promise.resolve('Promise function').then(console.log);
 // Here you can see async scheduler gets called at last
+
+setTimeout(() => {
+  console.log('Inside Timeout');
+}, 0);
+
 asyncScheduler.schedule(() => {
   console.log('From Async Scheduler');
 });

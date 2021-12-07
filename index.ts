@@ -1,20 +1,20 @@
-import { combineLatest, forkJoin, from, of, zip } from 'rxjs';
-import { withLatestFrom } from 'rxjs/operators';
+import { interval, map, share, shareReplay, take } from 'rxjs';
+import { publishReplay, tap } from 'rxjs/operators';
 
-const color$ = of('blue', 'red', 'green', 'yellow', 'messa', 'magenta');
+// share will multicast the value and turn the observable into HOT , With each subscription getting the values immediately
+const source = interval(1000).pipe(
+  take(3),
+  tap(() => console.log('Inside Tap')),
+  map((x: number) => {
+    console.log('Processing: ', x);
+    return x * x;
+  }),
+  shareReplay()
+);
 
-const logo$ = from(['fb', 'twitter', 'oauth', 'twillio', 'github', 'linkedIn']);
+source.subscribe((x) => console.log('subscription 1: ', x));
+source.subscribe((x) => console.log('subscription 3: ', x));
 
-// Zip flocks as lovebirds : every new value gets mapped to the new value
-console.log('********Combine Latest**************');
-
-combineLatest([color$, logo$]).subscribe(console.log);
-
-console.log('********Zip**************');
-zip(logo$, color$).subscribe(console.log);
-console.log('********Fork Join**************');
-
-forkJoin([logo$, color$]).subscribe(console.log);
-console.log('********With Latest From**************');
-
-logo$.pipe(withLatestFrom(color$)).subscribe(console.log);
+setTimeout(() => {
+  source.subscribe((x) => console.log('subscription 2: ', x));
+}, 3000);

@@ -17,13 +17,13 @@ const sub = of(
   'a',
   'rgdhs',
   'hgth',
-  'Scott'
+  'Val'
 ).pipe(
   last(),
   tap(() => {
     console.log('Hey from tap');
   }),
-  share()
+  shareReplay()
 );
 
 sub.subscribe(console.log);

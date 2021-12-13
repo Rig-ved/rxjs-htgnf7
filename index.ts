@@ -1,10 +1,15 @@
 import { of, partition } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 const names$ = of('Hello', 'World', 'Bye', 'Goodbye', 'Bye Night');
 
-const [bye$, otherNames$] = partition(names$, (item, index) => {
-  return item.toLowerCase().indexOf('bye') != -1;
-});
+const filteredNames$ = names$.pipe(
+  map((item) => {
+    return {
+      filtered: item.toLowerCase().indexOf('bye') != -1,
+      others: item.toLowerCase().indexOf('bye') == -1,
+    };
+  })
+);
 
-bye$.subscribe(console.log);
-otherNames$.subscribe(console.log);
+filteredNames$.subscribe(console.log);

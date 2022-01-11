@@ -1,28 +1,22 @@
-export interface SimpleChange<T> {
-  previousValue: T;
-  currentValue: T;
-}
+import { interval, map, share, shareReplay, take } from 'rxjs';
+import { publishReplay, tap } from 'rxjs/operators';
 
-export function onChanges<T = any>(
-  callback: (value: T, simpleChange?: SimpleChange<T>) => void
-) {
-  let cached = Symbol();
-  return (target, key) => {
-    Object.defineProperty(target, key, {
-      set(value) {
-        if (this[cached] != value) {
-          return;
-        }
-        this[cached] = value;
-        const change: SimpleChange<T> = {
-          currentValue: value,
-          previousValue: this[cached],
-        };
-        callback.call(this, value, change);
-      },
-      get() {
-        return this[cached];
-      },
-    });
-  };
-}
+// share will multicast the value and turn the observable into HOT , With each subscription getting the values immediately
+const source = interval(1000).pipe(
+  take(3),
+  tap(() => {
+    console.log('Hello');
+  }),
+  map((x: number) => {
+    console.log('Processing: ', x);
+    return x * x;
+  }),
+  shareReplay()
+);
+
+source.subscribe((x) => console.log('subscription 1: ', x));
+source.subscribe((x) => console.log('subscription 3: ', x));
+
+setTimeout(() => {
+  source.subscribe((x) => console.log('subscription 2: ', x));
+}, 3000);

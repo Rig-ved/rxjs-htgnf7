@@ -1,22 +1,27 @@
-import { interval, map, share, shareReplay, take } from 'rxjs';
-import { publishReplay, tap } from 'rxjs/operators';
+import { BehaviorSubject, map, Observable, ReplaySubject, Subject } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
-// share will multicast the value and turn the observable into HOT , With each subscription getting the values immediately
-const source = interval(1000).pipe(
-  take(3),
-  tap(() => {
-    console.log('Hello');
-  }),
-  map((x: number) => {
-    console.log('Processing: ', x);
-    return x * x;
-  }),
-  shareReplay()
+const sub = new ReplaySubject(2);
+sub.next(1);
+sub.next(2);
+sub.next(3);
+sub.subscribe(console.log);
+sub.next(6);
+
+const hello = Observable.create(function (observer) {
+  observer.next('Hello');
+  observer.next('World');
+  observer.complete(() => alert(1));
+});
+
+hello.pipe(finalize(() => console.log('12121'))).subscribe(
+  (val) => {
+    console.log(val);
+  },
+  (err) => {
+    console.log(err);
+  },
+  () => {
+    console.log('From Completed1');
+  }
 );
-
-source.subscribe((x) => console.log('subscription 1: ', x));
-source.subscribe((x) => console.log('subscription 3: ', x));
-
-setTimeout(() => {
-  source.subscribe((x) => console.log('subscription 2: ', x));
-}, 3000);

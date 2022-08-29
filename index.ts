@@ -18,7 +18,7 @@ const example = source.pipe(tap(() => console.log('***SIDE EFFECT***')));
 //   console.log('Shared 2', val)
 // );
 
-const sharedReplayExample = example.pipe(share());
+const sharedReplayExample = example.pipe(shareReplay());
 
 const subscibeFive = sharedReplayExample.subscribe((val) =>
   console.log('Shared Replay 1', val)
